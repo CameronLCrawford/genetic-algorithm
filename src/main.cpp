@@ -81,21 +81,16 @@ double geneticDiversity(std::shared_ptr<Agent> agent1, std::shared_ptr<Agent> ag
 
 int main()
 {
-	/*
-	Some seeds lead to agents creating a very strong solution in the first few generations
-	but some lead to the agents taking a few more generations. For testing, I had to vary
-	the seed to find the "worst" intial population and then evaluate how the algorithm performed
-	*/
+	// Sets seed for random
 	srand(0);
-	/*
-	The first portion of the program is reading in from the map file
-	*/
+
+	// Parses data from map file (format explained in README.md)
 	std::vector<sf::VertexArray> mapElements;
 	sf::VertexArray checkPoints(sf::Lines);
 	sf::Vector2f startingPosition;
 	int startingAngle;
 	int numberAgents;
-	std::ifstream mapFile("map.txt");
+	std::ifstream mapFile("resources/map.txt");
 	mapFile >> startingPosition.x >> startingPosition.y >> startingAngle >> numberAgents;
 	int numberMapElements;
 	mapFile >> numberMapElements;
@@ -141,9 +136,7 @@ int main()
 	const char numberLayers = 3;
 	char networkArchitecture[numberLayers] = { 3,5,2 };
 
-	/*
-	Initialising the network for each agent
-	*/
+	// Initialising the network for each agent
 	for (int i = 0; i < numberAgents; i++)
 	{
 		std::vector<Matrix> weights;
@@ -162,14 +155,10 @@ int main()
 		agents.push_back(std::make_shared<Agent>(weights, startingPosition, startingAngle, mapElements));
 	}
 
-	/*
-	Now for the main game loop
-	*/
+	// Main loop
 	while (window.isOpen())
 	{
-		/*
-		This just handles events and draws the necessary elements to the window
-		*/
+		// Handles events and draws the necessary elements to the window
 		window.clear(sf::Color(200, 200, 200));
 		while (window.pollEvent(event))
 		{
@@ -185,9 +174,7 @@ int main()
 			window.draw(mapElement);
 		}
 
-		/*
-		Updates and draws each agents onto the window
-		*/
+		// Updates and draws each agents onto the window
 		for (int currentAgent = 0; currentAgent < numberAgents; currentAgent++)
 		{
 			if (agents[currentAgent]->isFailed()) continue;
@@ -245,9 +232,7 @@ int main()
 			std::vector<std::shared_ptr<Agent>> survivedAgents;
 			numberFailed = 0;
 			double diversity = 0;
-			/*
-			Arbitratily picks some random agents to give an indication of diversity
-			*/
+			// Arbitratily picks some random agents to give an indication of diversity
 			for (int i = 0; i < 1000; i++)
 			{
 				diversity += geneticDiversity(agents[rand() % numberAgents], agents[rand() % numberAgents]);
@@ -282,9 +267,7 @@ int main()
 					survivedAgents.push_back(mutatedParent);
 				}
 			}
-			/* 
-			Creates random couples 
-			*/
+			// Creates random couples 
 			std::random_shuffle(parents.begin(), parents.end());
 			for (int currentAgent = 0; currentAgent < numberAgents / 5; currentAgent += 2)
 			{
